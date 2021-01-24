@@ -64,39 +64,32 @@ const char *log_starts_with_statement = "statement: ";
 const char *log_starts_with_duration = "duration: ";
 const char *detail_log_starts_with_failed = "Failed process was running: ";
 
+#define CLEAN_ERROR_DATA(errorData, target_field) \
+    { \
+        if (guc_delete_log_entry) { \
+            errorData->output_to_server = false; \
+        } else { \
+            pfree(errorData->target_field); \
+            errorData->target_field = pstrdup(log_dummy_message); \
+        } \
+    }
+
 static void hide_statements_in_log(ErrorData *errorData) {
     errorData->hide_stmt = true;
     errorData->hide_ctx = true;
 
-    bool found_in_message = false;
     if (errorData->elevel == LOG) {
         if (errorData->message) {
             if (starts_with(errorData->message, log_starts_with_statement)) {
-                found_in_message = true;
+                CLEAN_ERROR_DATA(errorData, message);
             } else if (starts_with(errorData->message, log_starts_with_duration)) {
-                found_in_message = true;
+                CLEAN_ERROR_DATA(errorData, message);
             }
         }
     }
-    if (found_in_message) {
-        if (guc_delete_log_entry) {
-            errorData->output_to_server = false;
-        } else {
-            pfree(errorData->message);
-            errorData->message = pstrdup(log_dummy_message);
-        }
-    }
-
-    bool found_in_detail = false;
     if (errorData->detail) {
-        found_in_detail = starts_with(errorData->detail, detail_log_starts_with_failed);
-    }
-    if (found_in_detail) {
-        if (guc_delete_log_entry) {
-            errorData->output_to_server = false;
-        } else {
-            pfree(errorData->detail);
-            errorData->detail = pstrdup(log_dummy_message);
+        if (starts_with(errorData->detail, detail_log_starts_with_failed)) {
+            CLEAN_ERROR_DATA(errorData, detail);
         }
     }
 }
