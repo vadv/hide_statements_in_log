@@ -12,8 +12,6 @@ static void do_emit_log(ErrorData *errorData);
 
 static void hide_statements_in_log(ErrorData *errorData);
 
-static bool starts_with(const char *string, const char *prefix);
-
 static emit_log_hook_type prev_emit_log_hook = NULL;
 static bool guc_delete_log_entry = true;
 static char *log_dummy_message = NULL;
@@ -60,10 +58,6 @@ static void do_emit_log(ErrorData *errorData) {
     }
 }
 
-const char *log_starts_with_statement = "statement: ";
-const char *log_starts_with_duration = "duration: ";
-const char *detail_log_starts_with_failed = "Failed process was running: ";
-
 #define CLEAN_ERROR_DATA(errorData, target_field) \
     { \
         if (guc_delete_log_entry) { \
@@ -80,28 +74,10 @@ static void hide_statements_in_log(ErrorData *errorData) {
 
     if (errorData->elevel == LOG) {
         if (errorData->message) {
-            if (starts_with(errorData->message, log_starts_with_statement)) {
-                CLEAN_ERROR_DATA(errorData, message);
-            } else if (starts_with(errorData->message, log_starts_with_duration)) {
-                CLEAN_ERROR_DATA(errorData, message);
-            }
+            CLEAN_ERROR_DATA(errorData, message);
         }
     }
     if (errorData->detail) {
-        if (starts_with(errorData->detail, detail_log_starts_with_failed)) {
-            CLEAN_ERROR_DATA(errorData, detail);
-        }
+        CLEAN_ERROR_DATA(errorData, detail);
     }
-}
-
-static bool starts_with(const char *string, const char *prefix) {
-    if (strlen(string) < strlen(prefix)) {
-        return false;
-    }
-    for (size_t i = 0; prefix[i] != '\0'; i++) {
-        if (string[i] != prefix[i]) {
-            return false;
-        }
-    }
-    return true;
 }

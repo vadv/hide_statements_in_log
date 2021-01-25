@@ -1,4 +1,5 @@
 .gitconfig
+*.bc
 
 # Idea
 .idea
