@@ -1,4 +1,4 @@
-name: Postgres tests
+name: Extension tests
 
 on: push
 
@@ -7,29 +7,20 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:11
-        env:
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
-
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install postgres dev
-        run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
+      - name: Install postgres
+        run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-server-dev-all postgresql
+
+      - name: Start postgres
+        run: sudo pg_ctlcluster 12 main start
+
+      - name: Create user root
+        run: sudo -S -u postgres -i /bin/bash -l -c 'psql -Atc "create user root with superuser"'
 
       - name: Build && Install extension
         run: make && sudo make install
-        env:
-          PGPASSWORD: postgres
 
       - name: Install pg_prove
         run: sudo cpan TAP::Parser::SourceHandler::pgTAP
@@ -45,11 +36,7 @@ jobs:
 
       - name: Install pgtap
         working-directory: pgtap
-        run: make && psql --host localhost --username postgres --dbname postgres --file sql/pgtap.sql
-        env:
-          PGPASSWORD: postgres
+        run: make && sudo psql --host localhost --username root --dbname postgres --file sql/pgtap.sql
 
       - name: Run pgtap tests
-        run: pg_prove --host localhost --dbname postgres --username postgres test/*.sql
-        env:
-          PGPASSWORD: postgres
+        run: sudo pg_prove --host localhost --dbname postgres --username root test/*.sql
