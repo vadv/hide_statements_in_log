@@ -29,3 +29,7 @@ boot_val   | statement is hidden
 $ # export PG_CONFIG=/path/to/pg_config
 $ make && make install
 ```
+
+## TODO
+
+Unfortunately, the log hook gets messages already with the translation, so we need to delete the entire message.
