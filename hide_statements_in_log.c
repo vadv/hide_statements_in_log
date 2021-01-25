@@ -31,7 +31,7 @@ void _PG_init(void) {
                                "Replace statement in log entry with text.",
                                NULL,
                                &log_dummy_message,
-                               "statement is hidden",
+                               "message is hidden",
                                PGC_USERSET,
                                0,
                                NULL,
