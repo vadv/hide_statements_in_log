@@ -32,5 +32,5 @@ $ make && make install
 
 ## TODO
 
-* Unfortunately, the log hook gets messages already with the translation, so need to delete the entire message.
-* Need to redirect deleted entries to STDOUT/SYSLOG.
+* Unfortunately, postgresql log_hook gets translated messages, now we delete entire message, but need to find a workaround.
+* Need to have possibility to redirect deleted entries into STDOUT/SYSLOG.
