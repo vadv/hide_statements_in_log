@@ -5,13 +5,13 @@ on: push
 jobs:
   pgtap:
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - uses: actions/checkout@v2
 
       - name: Install postgres
-        run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-server-dev-all postgresql
+        run: sudo DEBIAN_FRONTEND=noninteractive apt-get install -y postgresql-server-dev-all postgresql-12
 
       - name: Start postgres
         run: sudo pg_ctlcluster 12 main start
