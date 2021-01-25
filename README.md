@@ -32,4 +32,5 @@ $ make && make install
 
 ## TODO
 
-Unfortunately, the log hook gets messages already with the translation, so we need to delete the entire message.
+* Unfortunately, the log hook gets messages already with the translation, so we need to delete the entire message.
+* Need to redirect deleted entries to STDOUT/SYSLOG.
