@@ -28,6 +28,11 @@ jobs:
         env:
           SHELL: /bin/bash
 
+      - name: install extension
+        run: make && make install
+        env:
+          PGPASSWORD: postgres
+
       - name: install postgres dev
         run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
 
