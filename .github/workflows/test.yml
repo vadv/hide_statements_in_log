@@ -23,18 +23,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: install pg_prove
+      - name: Install postgres dev
+        run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
+
+      - name: Build && Install extension
+        run: make && sudo make install
+        env:
+          PGPASSWORD: postgres
+
+      - name: Install pg_prove
         run: sudo cpan TAP::Parser::SourceHandler::pgTAP
         env:
           SHELL: /bin/bash
-
-      - name: install postgres dev
-        run: sudo apt-get install -y --no-install-recommends postgresql-server-dev-all
-
-      - name: install extension
-        run: make && make install
-        env:
-          PGPASSWORD: postgres
 
       - name: Checkout pgtap
         uses: actions/checkout@v2
@@ -43,13 +43,13 @@ jobs:
           path: pgtap
           tag: v1.1.0
 
-      - name: install pgtap
+      - name: Install pgtap
         working-directory: pgtap
         run: make && psql --host localhost --username postgres --dbname postgres --file sql/pgtap.sql
         env:
           PGPASSWORD: postgres
 
-      - name: run tests
+      - name: Run pgtap tests
         run: pg_prove --host localhost --dbname postgres --username postgres test/*.sql
         env:
           PGPASSWORD: postgres
