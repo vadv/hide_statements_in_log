@@ -1,3 +1,9 @@
+.gitconfig
+*.bc
+
+# Idea
+.idea
+
 # Prerequisites
 *.d
 

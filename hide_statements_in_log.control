@@ -1,0 +1,5 @@
+# hide_statements_in_log extension
+comment = 'Hide statements in PostgreSQL log'
+default_version = '1.0'
+module_pathname = '$libdir/hide_statements_in_log'
+relocatable = true
